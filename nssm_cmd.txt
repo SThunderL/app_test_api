@@ -1,0 +1,4 @@
+nssm install nodeAppLands "C:\Program Files\nodejs\node.exe"
+nssm set nodeAppLands AppDirectory "C:\Api\app_lands"
+nssm set nodeAppLands AppParameters app.js
+nssm start nodeAppLands
