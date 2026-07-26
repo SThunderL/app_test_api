@@ -7,8 +7,6 @@ const apiErrorCode = "AuthToken"
 module.exports = async (req, res, next) => {
     try {
         const rawHeaders = req.rawHeaders
-        // console.log(rawHeaders)
-        let failedIps = []
         let sendRef = false
         let acceptedIps = rawHeaders.filter(e => {
             if (e.includes(":") /* && !failedIps.includes(e.split(":")[0]) */) {
@@ -19,8 +17,6 @@ module.exports = async (req, res, next) => {
             }
             return false
         })
-        console.log(acceptedIps)
-        console.log('<<<------------ A ------------>>>')
         if (sendRef) {
             const tokenData = await generateToken({ referer: "referer" })
             return res.send(reply.done({
@@ -53,14 +49,7 @@ module.exports = async (req, res, next) => {
             throw reply.error(`${apiErrorCode}_IpNotAccepted`)
         }
         ip = acceptedIps[0].split(":")[0]
-        console.log(ip)
-        // throw ""
-
-
         const tokenData = await generateToken({ ip })
-        // const tokenData = await manageTokens(enumTokenNames.lands, { requestNewToken: true, referer: ip })
-        // const layersTokenData = await manageTokens(enumTokenNames.admin)
-
         return res.send(reply.done({
             // online: tokenData,
             layers: tokenData,
