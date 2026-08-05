@@ -9,7 +9,7 @@ module.exports = async (req, res, next) => {
         const rawHeaders = req.rawHeaders
         let sendRef = false
         let acceptedIps = rawHeaders.filter(e => {
-            if (e.includes(":") /* && !failedIps.includes(e.split(":")[0]) */) {
+            if (e.includes(":")) {
                 if (!e.includes(process.env.HOST_IP))
                     sendRef = true
 
@@ -17,6 +17,7 @@ module.exports = async (req, res, next) => {
             }
             return false
         })
+
         if (sendRef) {
             const tokenData = await generateToken({ referer: "referer" })
             return res.send(reply.done({
@@ -28,7 +29,6 @@ module.exports = async (req, res, next) => {
         if (!acceptedIps.length) {
             throw reply.error(`${apiErrorCode}_IpNotAccepted`)
         }
-
 
         let ip = ""
         let serverIpList = []
@@ -50,6 +50,7 @@ module.exports = async (req, res, next) => {
         }
         ip = acceptedIps[0].split(":")[0]
         const tokenData = await generateToken({ ip })
+
         return res.send(reply.done({
             // online: tokenData,
             layers: tokenData,
