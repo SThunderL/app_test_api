@@ -9,7 +9,7 @@ module.exports = async (req, res, next) => {
     try {
         let tokenData = await manageTokens(enumTokenNames.lands)
 
-        let layerSection = await obtainLayers(tokenData.token, process.env.URL_LANDS, { folderName: "DLS" })
+        let layerSection = await obtainLayers(tokenData.token, process.env.URL_LANDS)
         return res.send(reply.done(layerSection))
     } catch (err) {
         next(reply.passError(apiErrorCode, err))

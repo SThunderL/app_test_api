@@ -51,33 +51,18 @@ async function manageTokens(tokenName, {
 }
 
 const enumTokenNames = {
-    admin: "admin",
     lands: "lands",
-    asezaOnline: "asezaOnline",
 }
 
 module.exports = { manageTokens, enumTokenNames: enumTokenNames }
 
 const tokenInfo = {
-    admin: {
-        url: `${process.env.URL_BASE}/${process.env.URL_END_TOKEN}`,
-        username: process.env.ADMIN_USER_NAME,
-        password: process.env.ADMIN_USER_PASS,
-        name: "admin"
-    },
     lands: {
         url: process.env.URL_LANDS_TOKEN,
         username: process.env.ONLINE_USER_NAME,
         password: process.env.ONLINE_USER_PASS,
         name: "lands"
-    },
-    asezaOnline: {
-        url: process.env.URL_LAYERS_EXTRA_LOGIN,
-        username: "portaladmin1",
-        // username: process.env.ADMIN_USER_NAME,
-        password: process.env.ADMIN_USER_PASS,
-        name: "asezaOnline"
-    },
+    }
 }
 
 function getDate15MinutesAgo() {
