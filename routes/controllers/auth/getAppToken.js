@@ -20,6 +20,7 @@ module.exports = async (req, res, next) => {
 
         if (sendRef) {
             const tokenData = await generateToken({ referer: "referer" })
+            tokenData["url"] = process.env.URL_BASE_LANDS
             return res.send(reply.done({
                 layers: tokenData,
                 ip: "referer"
@@ -50,13 +51,39 @@ module.exports = async (req, res, next) => {
         }
         ip = acceptedIps[0].split(":")[0]
         const tokenData = await generateToken({ ip })
-
+        tokenData["url"] = process.env.URL_BASE_LANDS
         return res.send(reply.done({
             // online: tokenData,
             layers: tokenData,
             ip: ip
         }))
     } catch (err) {
+        try {
+            if (!reply.validateError(err)) {
+                if (err.includes("Could not access any server machines")) {
+                    return next(reply.passError(apiErrorCode,
+                        reply.error({
+                            errorCode: "LayersAreDown",
+                            message: "معطل للصيانة _ Server Maintenance",
+                            internalData: err
+                        })
+                    ))
+                }
+            } else {
+                if (err.errorCode == "FailedToObtainToken") {
+                    return next(reply.passError(apiErrorCode,
+                        reply.error({
+                            errorCode: "LayersAreDown",
+                            message: "معطل للصيانة _ Server Maintenance.",
+                            internalData: err
+                        })
+                    ))
+                }
+            }
+        } catch (err) {
+            console.log(err)
+            console.log('undefined error')
+        }
         next(reply.passError(apiErrorCode, err))
     }
 }

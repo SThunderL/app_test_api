@@ -46,7 +46,12 @@ async function manageTokens(tokenName, {
             return await refreshToken(tokenName, tokenCollection, referer, expires, storeToken)
         }
     }
-
+    if (!Object.keys(tokenCollection[tokenName]).length) {
+        throw reply.error({
+            errorCode: "FailedToObtainToken",
+            message: "Failed to obtain token"
+        })
+    }
     return tokenCollection[tokenName]
 }
 
@@ -73,9 +78,7 @@ function getDate15MinutesAgo() {
 
 async function refreshToken(tokenName, tokenCollection, referer, expires, storeToken) {
     const { url, username, password } = tokenInfo[tokenName]
-    console.log(url)
     let tokenData = await getToken(url, username, password, referer, expires)
-    console.log(tokenData)
     tokenCollection[tokenName] = {
         "token": tokenData.token,
         "expires": tokenData.expires

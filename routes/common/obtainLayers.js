@@ -32,7 +32,6 @@ async function fabricateLayersJson(token, urlLayers, { dbList, folderName }) {
         }
         return addLayerSet(services[i].name, services[i].type, obj)
     }
-
     const finalDataSet = addLayerSet(services[0].name, services[0].type, {})
     return finalDataSet
 }
