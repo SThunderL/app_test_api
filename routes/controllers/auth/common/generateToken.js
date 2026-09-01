@@ -26,7 +26,7 @@ module.exports = async function ({ ip = "", referer = "" } = {}) {
         if (esriToken.data.error) throw reply.error({ errorCode: `GenerateToken`, data: esriToken.data.error })
         return esriToken.data
     } catch (err) {
-        if (esriToken.data.error) throw reply.error({ errorCode: `GenerateToken`, data: esriToken.data.error })
+        // if (esriToken.data.error) throw reply.error({ errorCode: `GenerateToken`, data: esriToken.data.error })
         throw err
     }
 }

@@ -49,29 +49,27 @@ async function requestLayers(urlLayers, serviceName, serviceType, token) {
         }
 
         let dataSet = { ids: {}, links: {}, base: { [serviceName]: urlGened } }
+        function reducer(obj, e) {
+            const name = `${serviceName}_${e.name}`
+            Object.assign(dataSet.ids, { [name]: e.id })
+            return { ...obj, [name]: `${urlGened}/${e.id}` }
+        }
         // I also need the ids
-        dataSet.links = result.data.layers?.reduce((obj, e) => {
-            Object.assign(dataSet.ids, { [e.name]: e.id })
-            return { ...obj, [e.name]: `${urlGened}/${e.id}` }
-        }, {})
-        dataSet.links = result.data.tables?.reduce((obj, e) => {
-            Object.assign(dataSet.ids, { [e.name]: e.id })
-            return { ...obj, [e.name]: `${urlGened}/${e.id}` }
-        }, dataSet.links)
-
-        // const dataLayers = result.data.layers?.reduce((obj, e) => { return { ...obj, [e.name]: `${urlGened}/${e.id}` } }, {})
-        // const dataTables = result.data.tables?.reduce((obj, e) => { return { ...obj, [e.name]: `${urlGened}/${e.id}` } }, {})
+        dataSet.links = result.data.layers?.reduce(reducer, dataSet.links)
+        dataSet.links = result.data.tables?.reduce(reducer, dataSet.links)
 
         // let dataSet = { ...dataLayers, ...dataTables }
         return dataSet
     } catch (err) {
         console.log("unable to get layer ", serviceName)
+        console.log(err)
         return {
             layers: {},
             tables: {}
         }
     }
 }
+
 async function requestServices(token, urlLayers, folder = "") {
     let url = urlLayers
     if (folder != "") {

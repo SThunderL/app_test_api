@@ -6,6 +6,16 @@ const apiErrorCode = "AuthToken"
 
 module.exports = async (req, res, next) => {
     try {
+        // return res.send(reply.done({
+        //     // online: tokenData,
+        //     layers: {
+        //         url: process.env.URL_BASE_LANDS,
+        //         expires: new Date(new Date().setDate(new Date().getDate() + 3)).getTime(),
+        //         token: ""
+        //     },
+        //     ip: "ip"
+        // }))
+
         const rawHeaders = req.rawHeaders
         let sendRef = false
         let acceptedIps = rawHeaders.filter(e => {

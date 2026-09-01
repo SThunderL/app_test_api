@@ -10,7 +10,11 @@ async function service() {
         let layersData = await obtainLayers(tokenData.token, process.env.URL_LANDS, {
         // let layersData = await obtainLayers("", process.env.URL_LANDS, {
             dbList: [
-                "DLS_Service",
+                // "DLS_Cassini_Mobile",
+                // "DLS_JTM_Mobile",
+                // "Tables_Mobile",
+                // "DLS_Layers_Service",
+                "DLS_Layers_Service",
                 "DLS_Cassini",
                 "DLS_JTM",
                 "Tables",
