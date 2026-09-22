@@ -1,22 +1,30 @@
 const { default: axios } = require('axios')
 const reply = require('../../routes/common/reply')
 
-module.exports = async function (token, urlLayers, { dbList = [], folderName = "" } = {}) {
+module.exports = async function (token, urlLayers, {
+    dbList = {
+        named: {
+            "DLS_JTM_Service": {
+                name: "DLS_JTM"
+            }
+        },
+        list: []
+    },
+    folderName = "" } = {}) {
     const layerData = await fabricateLayersJson(token, urlLayers, { dbList, folderName })
 
     return layerData
 }
 
-async function fabricateLayersJson(token, urlLayers, { dbList, folderName }) {
+async function fabricateLayersJson(token, urlLayers, { dbList = { named: {}, list: [] }, folderName }) {
     let i = 0
     const services = await requestServices(token, urlLayers, folderName)
     async function addLayerSet(serviceName, serviceType, obj) {
-        if ((dbList.length && dbList.includes(services[i].name)) || !dbList.length) {
+        if ((dbList.list.length && dbList.list.includes(services[i].name)) || !dbList.list.length || dbList.named[services[i].name]) {
             const serviceTypeCamel = toCamelCase(serviceType)
-            if (!obj[serviceTypeCamel]) {
-                obj[serviceTypeCamel] = {}
-            }
-            const infoSet = await requestLayers(urlLayers, serviceName, serviceType, token)
+            obj[serviceTypeCamel] ??= {}
+
+            const infoSet = await requestLayers(urlLayers, serviceName, serviceType, token, dbList.named[services[i].name])
             if (Object.keys(obj[serviceTypeCamel]).length) {
                 for (let k in obj[serviceTypeCamel]) {
                     obj[serviceTypeCamel][k] = { ...obj[serviceTypeCamel][k], ...infoSet[k] }
@@ -30,12 +38,19 @@ async function fabricateLayersJson(token, urlLayers, { dbList, folderName }) {
         if (services[i] === undefined) {
             return obj
         }
+
+
         return addLayerSet(services[i].name, services[i].type, obj)
     }
     const finalDataSet = addLayerSet(services[0].name, services[0].type, {})
     return finalDataSet
 }
-async function requestLayers(urlLayers, serviceName, serviceType, token) {
+async function requestLayers(urlLayers, serviceName, serviceType, token, {
+    name
+} = {}) {
+    if (name == undefined || name == "") {
+        name = serviceName
+    }
     let urlGened = `${urlLayers}/${serviceName}/${serviceType}`
     try {
         const result = await axios.get(urlGened, {
@@ -48,11 +63,11 @@ async function requestLayers(urlLayers, serviceName, serviceType, token) {
             return {}
         }
 
-        let dataSet = { ids: {}, links: {}, base: { [serviceName]: urlGened } }
+        let dataSet = { ids: {}, links: {}, base: { [name]: urlGened } }
         function reducer(obj, e) {
-            const name = `${serviceName}_${e.name}`
-            Object.assign(dataSet.ids, { [name]: e.id })
-            return { ...obj, [name]: `${urlGened}/${e.id}` }
+            const ssName = `${name}_${e.name}`
+            Object.assign(dataSet.ids, { [ssName]: e.id })
+            return { ...obj, [ssName]: `${urlGened}/${e.id}` }
         }
         // I also need the ids
         dataSet.links = result.data.layers?.reduce(reducer, dataSet.links)

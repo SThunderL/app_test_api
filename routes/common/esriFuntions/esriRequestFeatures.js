@@ -44,6 +44,7 @@ module.exports = async function (url, where = "1=1",
         returnCountOnly = false,
         funECode = "",
         logData = false,
+        timeOut = 0 // time for request in milliseconds
     } = {}
 ) {
     let requestedData = {
@@ -74,6 +75,7 @@ module.exports = async function (url, where = "1=1",
             method: "POST",
             headers: { "content-type": "application/x-www-form-urlencoded" },
             data: qs.stringify(requestedData),
+            timeout: timeOut,
             url: url + "/query",
         })
         tableData = tableData.data
