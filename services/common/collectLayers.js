@@ -28,20 +28,24 @@ module.exports = async function (token) {
 
         let layersStg = await obtainLayers(token, process.env.URL_LANDS, {
             dbList: {
-                list: [
-                    "DLS_Layers_Service",
-                    "Tables_STG",
-                ],
+                list: [],
                 named: {
+                    "DLS_Layers_Service_STG": {
+                        name: "DLS_Layers_Service",
+                    },
                     "DLS_JTM_Service_STG": {
                         name: "DLS_JTM"
                     },
                     "DLS_Cassini_Service_STG": {
                         name: "DLS_Cassini"
+                    },
+                    "Tables_STG": {
+                        name: "Tables"
                     }
                 }
             },
         })
+        console.log(layersStg)
         // for (let k in layersData.mapServer.base) {
         //     let newK = k
         //     if (k.includes("_Mobile")) {
