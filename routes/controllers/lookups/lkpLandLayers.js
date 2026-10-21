@@ -14,6 +14,9 @@ module.exports = async (req, res, next) => {
         try {
             const where = `${ref.lands.villCode} = '001'`
             let data = await esriRequestFeatures(dbTables.tableParcelMainCass, where, { token, timeOut: 10000 })
+            if(data == undefined) throw ""
+            if(data.length == 0) throw ""
+
             return res.send(reply.done(layers.main))
         } catch (err) {
             return res.send(reply.done(layers.stg))
